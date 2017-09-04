@@ -4,11 +4,11 @@ use Test::More;
 use Test::Script::Run;
 
 my @test_list = (
-    { script => "ptx"                 , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
-    { script => "scale_reads.pl"      , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
-    { script => "kmer_filter_reads.pl", arg => ["--version"], exp_ret => 1, exp_stderr => qr/Unknown option: version/m },
-    { script => "assemble_spades.pl"  , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
-    { script => "find_cyclic_graph.pl", arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ }
+    { script => "bin/ptx"                 , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
+    { script => "bin/scale_reads.pl"      , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
+    { script => "bin/kmer_filter_reads.pl", arg => ["--version"], exp_ret => 1, exp_stderr => qr/Unknown option: version/m },
+    { script => "bin/assemble_spades.pl"  , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
+    { script => "bin/find_cyclic_graph.pl", arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ }
     );
 
 foreach my $testset (@test_list)
