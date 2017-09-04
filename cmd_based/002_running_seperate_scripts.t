@@ -18,12 +18,12 @@ foreach my $testset (@test_list)
     is($ret, $testset->{exp_ret}, sprintf('%s with argument %s return with exit code %d', $testset->{script}, $testset->{arg}, $testset->{exp_ret}));
     if (exists $testset->{exp_stdout})
     {
-	ok($stdout =~ $testset->{exp_stdout}, sprintf('%s with argument %s return with expected output', $testset->{script}, $testset->{arg}));
+	like($stdout, $testset->{exp_stdout}, sprintf('%s with argument %s return with expected output', $testset->{script}, $testset->{arg}));
     }
 
     if (exists $testset->{exp_stderr})
     {
-	ok($stderr =~ $testset->{exp_stderr}, sprintf('%s with argument %s return with expected stderr', $testset->{script}, $testset->{arg}));
+	like($stderr, $testset->{exp_stderr}, sprintf('%s with argument %s return with expected stderr', $testset->{script}, $testset->{arg}));
     }
 }
 
