@@ -15,7 +15,7 @@ foreach my $testset (@test_list)
 {
     my ( $ret, $stdout, $stderr ) = run_script($testset->{script}, $testset->{arg});
 
-    is($ret, $testset->{exp_ret}, sprintf('%s with argument %s return with exit code %d', $testset->{script}, $testset->{arg}, $testset->{exp_ret}));
+    is($ret, $testset->{exp_ret}, sprintf('%s with argument %s return with exit code %d', $testset->{script}, join(", ", @{$testset->{arg}}), $testset->{exp_ret}));
     if (exists $testset->{exp_stdout})
     {
 	like($stdout, $testset->{exp_stdout}, sprintf('%s with argument %s return with expected output', $testset->{script}, $testset->{arg}));
