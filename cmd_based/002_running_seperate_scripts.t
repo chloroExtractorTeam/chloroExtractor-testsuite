@@ -8,7 +8,7 @@ my @test_list = (
     { script => "bin/scale_reads.pl"      , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
     { script => "bin/kmer_filter_reads.pl", arg => ["--version"], exp_ret => 1, exp_stderr => qr/Unknown option: version/m },
     { script => "bin/assemble_spades.pl"  , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
-    { script => "bin/find_cyclic_graph.pl", arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ }
+    { script => "bin/find_cyclic_graph.pl", arg => ["--version"], exp_ret => 0, exp_stdout => qr/^v\d+\.\d+$/ }
     );
 
 foreach my $testset (@test_list)
