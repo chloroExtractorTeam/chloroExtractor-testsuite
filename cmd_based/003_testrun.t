@@ -8,6 +8,7 @@ use Archive::Extract;
 use Digest::MD5;
 
 use Test::More;
+use Test::Script::Run;
 
 my %files = (
     'SRR5216995_1M_1.fastq' => "51244d493e0459b22f23ce38ba2252a1",
@@ -52,5 +53,19 @@ unless ($correct_checksums == int(keys %files))
     done_testing;
     exit;
 }
+
+# prepare run command
+
+my @arg = ();
+my @filenames = map { $tempdir.'/'.$_ } (sort keys %files);
+for(my $i = 1; $i <= @filenames; $i++)
+{
+    push(@arg, ("-".$i, $filenames[$i-1]));
+}
+
+my ($ret, $stdout, $stderr ) = run_script("bin/ptx", \@arg);
+my $error_code = Test::Script::Run::last_script_exit_code();
+
+is($error_code, 0, 'Run of ptx returns 0 as error code');
 
 done_testing;
