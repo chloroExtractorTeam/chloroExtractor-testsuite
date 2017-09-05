@@ -66,6 +66,10 @@ for(my $i = 1; $i <= @filenames; $i++)
 my ($ret, $stdout, $stderr ) = run_script("bin/ptx", \@arg);
 my $error_code = Test::Script::Run::last_script_exit_code();
 
+diag($stdout);
+diag($stderr);
+diag("Error code: $error_code and return value $ret");
+
 is($error_code, 0, 'Run of ptx returns 0 as error code');
 
 done_testing;
