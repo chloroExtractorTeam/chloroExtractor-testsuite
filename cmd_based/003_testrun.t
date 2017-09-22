@@ -55,12 +55,15 @@ unless ($correct_checksums == int(keys %files))
     exit;
 }
 
+# where are the input reads
+my @filenames = map { $tempdir.'/'.$_ } (sort keys %files);
+
 # scramble the read input files
 diag("Scrambling the input reads");
 my %dat = ();
 my $num_reads = 0;
 # read input
-foreach my $file (keys %files)
+foreach my $file (@filenames)
 {
     open(FH, "<", $file) || die($!);
     while (! eof(FH))
@@ -104,7 +107,6 @@ diag("Written new input files");
 
 # prepare run command
 my @arg = ();
-my @filenames = map { $tempdir.'/'.$_ } (sort keys %files);
 for(my $i = 1; $i <= @filenames; $i++)
 {
     push(@arg, ("-".$i, $filenames[$i-1]));
