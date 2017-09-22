@@ -11,16 +11,16 @@ use Test::More;
 use Test::Script::Run;
 
 my %files = (
-    'SRR5216995_1M_1.fastq' => "51244d493e0459b22f23ce38ba2252a1",
-    'SRR5216995_1M_2.fastq' => "da45378160cc306fcdfb700dbbaad0f6"
+    'at_simulated1.fq' => "dbbf681985a6ef987e9a02a96c4c1a36",
+    'at_simulated2.fq' => "0f9a9d0161ef185b7610978d7fe8b31f"
     );
 
-my $filelocation = 'https://zenodo.org/record/884449/files/SRR5216995_1M.tar.bz2';
+my $filelocation = 'https://github.com/chloroExtractorTeam/simulate/releases/download/v1.0reduced/v1.0reduced_result.tar.bz2';
 
 # Download the testset to a temporary folder
 my $tempdir = File::Temp::tempdir();
 
-my $downloadlocation = $tempdir."/SRR5216995_1M.tar.bz2";
+my $downloadlocation = $tempdir."/v1.0reduced_result.tar.bz2";
 
 my $code = getstore($filelocation, $downloadlocation);
 my $ae = Archive::Extract->new( archive => $downloadlocation );
