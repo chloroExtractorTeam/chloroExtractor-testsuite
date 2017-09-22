@@ -12,16 +12,16 @@ use Test::More;
 use Test::Script::Run;
 
 my %files = (
-    'at_simulated1.fq' => "dbbf681985a6ef987e9a02a96c4c1a36",
-    'at_simulated2.fq' => "0f9a9d0161ef185b7610978d7fe8b31f"
+    'at_simulated1.fq' => "87ca3af8458674083db501f50cf33770",
+    'at_simulated2.fq' => "c2820f062704c7572e487368030b1ecd"
     );
 
-my $filelocation = 'https://github.com/chloroExtractorTeam/simulate/releases/download/v1.0reduced/v1.0reduced_result.tar.bz2';
+my $filelocation = 'https://github.com/chloroExtractorTeam/simulate/releases/download/v1.1reduced/v1.1reduced_result.tar.bz2';
 
 # Download the testset to a temporary folder
 my $tempdir = File::Temp::tempdir();
 
-my $downloadlocation = $tempdir."/v1.0reduced_result.tar.bz2";
+my $downloadlocation = $tempdir."/v1.1reduced_result.tar.bz2";
 
 my $code = getstore($filelocation, $downloadlocation);
 my $ae = Archive::Extract->new( archive => $downloadlocation );
