@@ -6,6 +6,7 @@ use File::Temp;
 use LWP::Simple;
 use Archive::Extract;
 use Digest::MD5;
+use List::Util qw(shuffle);
 
 use Test::More;
 use Test::Script::Run;
@@ -54,8 +55,54 @@ unless ($correct_checksums == int(keys %files))
     exit;
 }
 
-# prepare run command
+# scramble the read input files
+diag("Scrambling the input reads");
+my %dat = ();
+my $num_reads = 0;
+# read input
+foreach my $file (keys %files)
+{
+    open(FH, "<", $file) || die($!);
+    while (! eof(FH))
+    {
+	my $h  = <FH>;
+	my $s  = <FH>;
+	my $h2 = <FH>;
+	my $q  = <FH>;
 
+	push(@{$dat{$file}}, $h.$s.$h2.$q);
+    }
+    close(FH) || die ($!);
+
+    if ($num_reads == 0)
+    {
+	$num_reads = scalar @{$dat{$file}};
+    } else {
+	die "Different number of reads" if ($num_reads != scalar @{$dat{$file}});
+    }
+}
+
+# generate new read order
+my $sran_ini = 641614629; # from random.org (number between 100000 and 1000000000)
+srand($sran_ini);
+
+diag("Random number generator initiated with $sran_ini as seed");
+
+my @order = shuffle(0..($num_reads-1));
+foreach my $file (keys %dat)
+{
+    open(FH, ">", $file) || die($!);
+    foreach my $idx (@order)
+    {
+	print FH $dat{$file}[$idx];
+    }
+    close(FH) || die ($!);
+}
+
+diag("Written new input files");
+
+
+# prepare run command
 my @arg = ();
 my @filenames = map { $tempdir.'/'.$_ } (sort keys %files);
 for(my $i = 1; $i <= @filenames; $i++)
