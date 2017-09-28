@@ -4,7 +4,7 @@ use Test::More;
 use Test::Script::Run;
 
 my @test_list = (
-    { script => "bin/ptx"                 , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
+    { script => "bin/ptx"                 , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^v\d+\.\d+\.\d+$/ },
     { script => "bin/scale_reads.pl"      , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/ },
     { script => "bin/kmer_filter_reads.pl", arg => ["--version"], exp_ret => 1, exp_stderr => qr/Unknown option: version/m },
     { script => "bin/assemble_spades.pl"  , arg => ["--version"], exp_ret => 0, exp_stdout => qr/^\d+\.\d+$/, todo => 'Needs to be rewritten' },
