@@ -3,7 +3,6 @@
 use strict;
 use warnings;
 use File::Temp;
-use LWP::Simple;
 use Archive::Extract;
 use Digest::MD5;
 use List::Util qw(shuffle);
@@ -12,19 +11,14 @@ use Test::More;
 use Test::Script::Run;
 
 my %files = (
-    'at_simulated1.fq' => "87ca3af8458674083db501f50cf33770",
-    'at_simulated2.fq' => "c2820f062704c7572e487368030b1ecd"
+    'divide_by_zero_bug_testset_1.fq' => "25fc173d905fddab13aa16fa34d6fdf3",
+    'divide_by_zero_bug_testset_2.fq' => "03b1e21629ca926ba547153e2918cf88"
     );
 
-my $filelocation = 'https://github.com/chloroExtractorTeam/simulate/releases/download/v1.1reduced/v1.1reduced_result.tar.bz2';
-
-# Download the testset to a temporary folder
+my $location = "divide_by_zero_bug_testset.tar.gz";
 my $tempdir = File::Temp::tempdir();
 
-my $downloadlocation = $tempdir."/v1.1reduced_result.tar.bz2";
-
-my $code = getstore($filelocation, $downloadlocation);
-my $ae = Archive::Extract->new( archive => $downloadlocation );
+my $ae = Archive::Extract->new( archive => $location );
 
 my $ok = $ae->extract( to => $tempdir ) || die $ae->error;
 
@@ -73,7 +67,7 @@ foreach my $file (@filenames)
 	my $h2 = <FH>;
 	my $q  = <FH>;
 
-	push(@{$dat{$file}}, $h.$s.$h2.$q);
+	push(@{$dat{$file}}, "".$s."+\n".$q);
     }
     close(FH) || die ($!);
 
@@ -83,6 +77,14 @@ foreach my $file (@filenames)
     } else {
 	die "Different number of reads" if ($num_reads != scalar @{$dat{$file}});
     }
+}
+
+# we need 10x the read set
+foreach my $file (keys %dat)
+{
+    my @tmp = @{$dat{$file}};
+    $dat{$file} = [@tmp, @tmp, @tmp, @tmp, @tmp, @tmp, @tmp, @tmp, @tmp, @tmp];
+    $num_reads = int(@{$dat{$file}});
 }
 
 # generate new read order
@@ -97,28 +99,38 @@ foreach my $file (keys %dat)
     open(FH, ">", $file) || die($!);
     foreach my $idx (@order)
     {
-	print FH $dat{$file}[$idx];
+	print FH "\@seq.$idx\n".$dat{$file}[$idx];
     }
     close(FH) || die ($!);
 }
 
 diag("Written new input files");
 
+# run jellyfish
+my @cmd = ("jellyfish");
+my @arg = qw(count -m 31 -s 500M -C -o jf0.jf);
+push(@arg, @filenames);
 
-# prepare run command
-my @arg = ();
+push(@cmd, @arg);
+
+my $stdout = qx(@cmd);
+my $error_code = $?;
+
+is($error_code, 0, 'Run of jellyfish returns 0 as error code');
+
+# prepare scale_reads.pl command
+@cmd = ("bin/scale_reads.pl");
+@arg = qw(--ref-cluster data/cds-nr98-core.fa --kmer-size 31 --out scr -c ptx.cfg);
 for(my $i = 1; $i <= @filenames; $i++)
 {
     push(@arg, ("-".$i, $filenames[$i-1]));
 }
 
-my ($ret, $stdout, $stderr ) = run_script("bin/ptx", \@arg);
-my $error_code = Test::Script::Run::last_script_exit_code();
+push(@cmd, @arg);
 
-diag($stdout);
-diag($stderr);
-diag("Error code: $error_code and return value $ret");
+$stdout = qx(@cmd);
+$error_code = $?;
 
-is($error_code, 0, 'Run of ptx returns 0 as error code');
+is($error_code, 0, 'Run of scale_reads.pl returns 0 as error code');
 
 done_testing;
